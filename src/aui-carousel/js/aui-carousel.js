@@ -54,12 +54,25 @@ A.Carousel = A.Base.create('carousel', A.ImageViewerBase, [A.ImageViewerSlidesho
     TPL_MENU: '<div class="' + CSS_MENU + '"><menu>' +
         '<li><a class="' + CSS_MENU_ITEM + ' ' + CSS_MENU_PLAY + ' ' +
         CSS_IMAGE_VIEWER_CONTROL + '"></a></li>' +
-        '<li><a class="' + CSS_MENU_ITEM + ' ' + CSS_MENU_PREV + ' ' +
+        '<li><a aria-label="previous" class="' + CSS_MENU_ITEM + ' ' + CSS_MENU_PREV + ' ' +
         CSS_IMAGE_VIEWER_CONTROL_LEFT + ' ' + CSS_IMAGE_VIEWER_CONTROL + '"></a></li>' +
         '{items}' +
-        '<li><a class="' + CSS_MENU_ITEM + ' ' + CSS_MENU_NEXT + ' ' +
+        '<li><a aria-label="next" class="' + CSS_MENU_ITEM + ' ' + CSS_MENU_NEXT + ' ' +
         CSS_IMAGE_VIEWER_CONTROL_RIGHT + ' ' + CSS_IMAGE_VIEWER_CONTROL + '"></a></li>' +
         '</menu></div>',
+
+    /**
+     * Construction logic executed during `Carousel` instantiation.
+     * Lifecycle.
+     *
+     * @method initializer
+     * @protected
+     */
+    initializer: function() {
+        this.after({
+            render: this._afterRender
+        });
+    },
 
     /**
      * Bind the events on the `A.Carousel` UI. Lifecycle.
@@ -154,6 +167,17 @@ A.Carousel = A.Base.create('carousel', A.ImageViewerBase, [A.ImageViewerSlidesho
      */
     _afterPauseOnHoverChange: function() {
         this._bindPauseOnHover();
+    },
+
+    /**
+     * Fired after `render` event.
+     *
+     * @method _afterRender
+     * @param {EventFacade} event
+     * @protected
+     */
+    _afterRender: function() {
+        this._plugFocusManager();
     },
 
     /**
@@ -385,6 +409,58 @@ A.Carousel = A.Base.create('carousel', A.ImageViewerBase, [A.ImageViewerSlidesho
     },
 
     /**
+     * Setup the `Plugin.NodeFocusManager` that handles keyboard
+     * navigation.
+     *
+     * @method _plugFocusManager
+     * @protected
+     */
+    _plugFocusManager: function() {
+        var config = this.get('focusManager'),
+            nodeMenu = this.get('nodeMenu');
+
+        nodeMenu.plug(A.Plugin.NodeFocusManager, config);
+
+        nodeMenu.on('keydown', A.bind(this._onKeydown, this));
+    },
+
+    /**
+     * Fired when the user presses a key on the keyboard.
+     *
+     * @method _onKeydown
+     * @param {EventFacade} event
+     * @protected
+     */
+    _onKeydown: function(event) {
+        var nodeMenu = this.get('nodeMenu'),
+            controlNext = this.get('controlNext'),
+            controlPrevious = this.get('controlPrevious');
+
+        var focusedNode = nodeMenu.one('.focused a');
+
+        if (focusedNode && event.isKey('ENTER')) {
+            if (focusedNode == controlNext) {
+                this.next();
+            }
+            else if (focusedNode == controlPrevious) {
+                this.prev();
+            }
+            else if (focusedNode.hasClass(CSS_MENU_INDEX)) {
+                event.currentTarget = focusedNode;
+
+                this._onClickControl(event);
+            }
+            else if (focusedNode.hasClass(CSS_MENU_PLAY) || focusedNode.hasClass(CSS_MENU_PAUSE)) {
+                this._onPlayerClick();
+            }
+        }
+
+        if (event.isKey('SPACE')) {
+            this._onPlayerClick();
+        }
+    },
+
+    /**
      * Renders the carousel's menu with all its controls.
      *
      * @method _renderControls
@@ -541,6 +617,27 @@ A.Carousel = A.Base.create('carousel', A.ImageViewerBase, [A.ImageViewerSlidesho
             },
             value: null,
             validator: A.Lang.isNode
+        },
+
+        /**
+         * Config object for `Plugin.NodeFocusManager`,
+         *
+         * @attribute focusManager
+         * @default Config object
+         * @type Object
+         */
+        focusManager: {
+            value: {
+                descendants: 'li',
+                keys: {
+                    next: 'down:39', // Down arrow
+                    previous: 'down:37' // Up arrow
+                },
+                focusClass: 'focused',
+                circular: true
+            },
+            validator: A.Lang.isObject,
+            writeOnce: 'initOnly'
         },
 
         /**
