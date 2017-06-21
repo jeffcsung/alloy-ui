@@ -7,9 +7,7 @@
 
 var Lang = A.Lang,
     isString = Lang.isString,
-
     EVENT_ENTER_KEY = 'enterKey',
-
     _DOCUMENT = A.one(A.config.doc);
 
 /**
@@ -45,6 +43,10 @@ DatePickerDelegate.prototype = {
         var instance = this;
 
         instance.bindDelegateUI();
+
+        this.after({
+            render: this._afterRender
+        });
     },
 
     /**
@@ -118,7 +120,7 @@ DatePickerDelegate.prototype = {
             selectedDates = null;
 
         if (activeInput) {
-            selectedDates = activeInput.getData('datepickerSelection')
+            selectedDates = activeInput.getData('datepickerSelection');
         }
 
         return selectedDates;
@@ -150,7 +152,13 @@ DatePickerDelegate.prototype = {
      *
      * @method useInputNode
      */
-    useInputNode: function() {},
+    useInputNode: function(node) {
+        var instance = this;
+
+
+            return instance.useInputNode(node);
+
+    },
 
     /**
      * Triggers `useInputNode` method once.
@@ -246,7 +254,12 @@ DatePickerDelegate.prototype = {
     * @protected
     */
     _handleTabKeyEvent: function() {
-        this.hide();
+
+        var calendarNode = A.one('#' + this.getCalendar()._calendarId)._node.parentNode.parentNode;
+
+        calendarNode.focus();
+
+        // document.getElementsByClassName('yui3-calendar')[0].focus();//
     },
 
     /**
@@ -356,7 +369,7 @@ DatePickerDelegate.prototype = {
                 activeInput.val(values.join(dateSeparator));
             }
         };
-    }
+    },
 };
 
 /**
