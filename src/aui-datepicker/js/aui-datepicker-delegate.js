@@ -7,9 +7,7 @@
 
 var Lang = A.Lang,
     isString = Lang.isString,
-
     EVENT_ENTER_KEY = 'enterKey',
-
     _DOCUMENT = A.one(A.config.doc);
 
 /**
@@ -45,6 +43,10 @@ DatePickerDelegate.prototype = {
         var instance = this;
 
         instance.bindDelegateUI();
+
+        this.after({
+            render: this._afterRender
+        });
     },
 
     /**
@@ -118,7 +120,7 @@ DatePickerDelegate.prototype = {
             selectedDates = null;
 
         if (activeInput) {
-            selectedDates = activeInput.getData('datepickerSelection')
+            selectedDates = activeInput.getData('datepickerSelection');
         }
 
         return selectedDates;
@@ -150,7 +152,13 @@ DatePickerDelegate.prototype = {
      *
      * @method useInputNode
      */
-    useInputNode: function() {},
+    useInputNode: function(node) {
+        var instance = this;
+
+
+            return instance.useInputNode(node);
+
+    },
 
     /**
      * Triggers `useInputNode` method once.
@@ -246,17 +254,11 @@ DatePickerDelegate.prototype = {
     * @protected
     */
     _handleTabKeyEvent: function() {
-        //this.hide();
-        var instance = this;
-        console.log(instance);
-        var cur_node = instance.popover.bodyNode;
-        while (cur_node){
-            console.log(cur_node);
-            //cur_node = (cur_node || cur_node._node) ? (cur_node.firstChild || cur_node._node.firstChild) : null;
-            cur_node = (cur_node && cur_node.childNodes ? cur_nodes.childNodes[0] : null);
-            //cur_node = cur_node.childNodes[0]
-        }
-        console.log('cur_node=',cur_node);
+        var calendarNode = A.one('#' + this.getCalendar()._calendarId)._node.parentNode.parentNode;
+
+        calendarNode.focus();
+
+        // document.getElementsByClassName('yui3-calendar')[0].focus();//
     },
 
     /**
@@ -367,7 +369,7 @@ DatePickerDelegate.prototype = {
                 activeInput.val(values.join(dateSeparator));
             }
         };
-    }
+    },
 };
 
 /**
