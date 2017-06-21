@@ -4,6 +4,9 @@
             "calendar",
             "base",
             "base-build",
+            "aui-event",
+            "node-event-delegate",
+            "node-focusmanager",
             "aui-datepicker-delegate",
             "aui-datepicker-popover"
         ],
@@ -12,7 +15,6 @@
 
     "aui-datepicker-delegate": {
         "requires": [
-            "node-event-delegate",
             "event-focus",
             "aui-event-input",
             "aui-datatype-date-parse"
