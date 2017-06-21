@@ -207,6 +207,7 @@ A.mix(DatePickerBase.prototype, {
      * @param node
      */
     useInputNode: function(node) {
+        node.setAttribute('aria-live','rude');
         var instance = this,
             popover = instance.getPopover();
 
@@ -231,7 +232,10 @@ A.mix(DatePickerBase.prototype, {
         var instance = this,
             calendar = instance.getCalendar(),
             selectionMode = calendar.get('selectionMode');
-
+        //console.log('instance._afterCalendarDateClick',instance);
+        //var temp_node = calendar._dateToNode(calendar.get('date'));
+        //console.log('temp_node',temp_node);
+        //temp_node.setAttribute('aria-live','rude');
         if (instance.get('autoHide') && (selectionMode !== 'multiple')) {
             instance.hide();
         }

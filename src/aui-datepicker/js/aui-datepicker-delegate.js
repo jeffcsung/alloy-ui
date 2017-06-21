@@ -246,7 +246,17 @@ DatePickerDelegate.prototype = {
     * @protected
     */
     _handleTabKeyEvent: function() {
-        this.hide();
+        //this.hide();
+        var instance = this;
+        console.log(instance);
+        var cur_node = instance.popover.bodyNode;
+        while (cur_node){
+            console.log(cur_node);
+            //cur_node = (cur_node || cur_node._node) ? (cur_node.firstChild || cur_node._node.firstChild) : null;
+            cur_node = (cur_node && cur_node.childNodes ? cur_nodes.childNodes[0] : null);
+            //cur_node = cur_node.childNodes[0]
+        }
+        console.log('cur_node=',cur_node);
     },
 
     /**
@@ -260,6 +270,7 @@ DatePickerDelegate.prototype = {
         var instance = this;
 
         instance.useInputNodeOnce(event.currentTarget);
+        console.log('current target: ',event.currentTarget);
 
         instance._userInteractionInProgress = true;
     },
