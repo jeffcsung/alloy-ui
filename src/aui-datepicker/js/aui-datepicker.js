@@ -209,7 +209,6 @@ A.mix(DatePickerBase.prototype, {
     useInputNode: function(node) {
         var instance = this,
             popover = instance.getPopover();
-
         popover.set('trigger', node);
         instance.set('activeInput', node);
 
@@ -219,6 +218,9 @@ A.mix(DatePickerBase.prototype, {
 
         instance.clearSelection(true);
         instance.selectDatesFromInputValue(instance.getParsedDatesFromInputValue());
+
+        // Refocus on previous node
+        instance._ATTR_E_FACADE.newVal._node.focus();
     },
 
     /**
@@ -234,6 +236,9 @@ A.mix(DatePickerBase.prototype, {
 
         if (instance.get('autoHide') && (selectionMode !== 'multiple')) {
             instance.hide();
+
+            // Refocus on previous node
+            instance._ATTR_E_FACADE.newVal._node.focus();
         }
     },
 
@@ -271,6 +276,10 @@ A.mix(DatePickerBase.prototype, {
         var instance = this;
 
         instance._setCalendarToFirstSelectedDate();
+
+        // Closes calendar when enter key is pressed on date
+        instance.hide();
+        instance._ATTR_E_FACADE.newVal._node.focus();
     },
 
     /**

@@ -9,6 +9,17 @@ var Lang = A.Lang,
     isString = Lang.isString,
 
     EVENT_ENTER_KEY = 'enterKey',
+    EVENT_TAB_KEY = 'tabKey',
+
+    _DOCUMENT = A.one(A.config.doc),
+
+    getCN = A.getClassName,
+
+    CSS_PREFIX = 'yui3',
+    CSS_CALENDAR = getCN(CSS_PREFIX, 'calendar'),
+
+    // Variable to store previous Node informaiton
+    prevNode = {},
 
     _DOCUMENT = A.one(A.config.doc);
 
@@ -84,7 +95,13 @@ DatePickerDelegate.prototype = {
                 A.bind('_onceUserInteractionRelease', instance), trigger),
 
             container.delegate(
-                'key', A.bind('_handleTabKeyEvent', instance), 'tab', trigger)
+                'key', A.bind('_handleTabKeyEvent', instance), 'tab', trigger),
+
+            container.delegate(
+                'key', A.bind('_handleEscKeyEvent', instance), 'esc', trigger),
+
+            container.delegate(
+                'key', A.bind('_handleEnterKeyEvent', instance), 'enter', trigger)
 
         ];
 
@@ -234,19 +251,73 @@ DatePickerDelegate.prototype = {
     _handleKeydownEvent: function(event) {
         var instance = this;
 
+        prevNode = event._currentTarget;
+
         if (event.isKey('enter')) {
             instance.fire(EVENT_ENTER_KEY);
+        } else if (event.isKey('tab')) {
+            instance.fire(EVENT_TAB_KEY);
+            console.log('instance and prevNode');
+            console.log(event);
+            console.log(event.prevVal);
+            console.log(prevNode);
         }
     },
 
     /**
-    * Handles tab key events
+    * Focuses on active calendar.
+    *
+    * @method _handleTabKeyEvent
+    * @protected
+    */
+    _focusOnActiveCalendarNode: function() {
+        var calendarNode = A.one('#' + this.getCalendar()._calendarId)._node.parentNode.parentNode;
+
+        calendarNode.focus();
+    },
+
+    /**
+    * Handles tab key events and focuses on calendar.
     *
     * @method _handleTabKeyEvent
     * @protected
     */
     _handleTabKeyEvent: function() {
-        this.hide();
+        var popupChildren = A.one('.' + this._attrs.popoverCssClass.value).get('children'),
+            calendar = popupChildren._nodes[0].lastChild.firstChild;
+        if (calendar) {
+            calendar.focus();
+        }
+    },
+
+    /**
+    * Handles esc key events
+    *
+    * @method _handleEscKeyEvent
+    * @protected
+    */
+    _handleEscKeyEvent: function() {
+        var instance = this;
+
+        instance.useInputNodeOnce(prevNode); //should pass variable current or previous node through here to move focus back to that node
+        // instance._focusOnActiveCalendarNode();
+    },
+    /**
+    * Fires on enter
+    *
+    * @method _handleEnterKeyEvent
+    * @protected
+    */
+    _handleEnterKeyEvent: function() {
+        var instance = this;
+
+        // if current node is an input field, auto show and focus calendar
+        calendar = instance.getCalendar(),
+        selectionMode = calendar.get('selectionMode');
+        if ((instance.get('activeInput')._node.nodeName === 'INPUT') && (selectionMode !== 'multiple')) {
+            instance.show();
+            prevNode = event._currentTarget;
+        }
     },
 
     /**
