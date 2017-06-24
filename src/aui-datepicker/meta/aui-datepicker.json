@@ -1,6 +1,7 @@
 {
     "aui-datepicker": {
         "requires": [
+            "aui-aria",
             "calendar",
             "base",
             "base-build",

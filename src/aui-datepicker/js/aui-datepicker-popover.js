@@ -9,6 +9,8 @@ var Lang = A.Lang;
 
 var _DOCUMENT = A.one(A.config.doc);
 
+var calendarWasFocused = false;
+
 /**
  * A base class for `DatePickerPopover`.
  *
@@ -102,6 +104,7 @@ A.mix(DatePickerPopover.prototype, {
 
             instance.popover = popover;
         }
+
         return popover;
     },
 
@@ -153,10 +156,21 @@ A.mix(DatePickerPopover.prototype, {
             target = event.target,
             activeInput = instance.get('activeInput');
 
-        if (activeInput && (!instance._isActiveInputFocused() && !activeInput.contains(target))) {
-
-            instance.hide();
+            // Set variable to check if calendar is in focus before closing.
+        if (instance._isActiveInputFocused()) {
+            calendarWasFocused = true;
         }
+
+        if (activeInput && (!instance._isActiveInputFocused() && !activeInput.contains(target))) {
+            instance.hide();
+
+            // Remove focus functionality after second click outside of calendar.
+            if (calendarWasFocused) {
+                instance._ATTR_E_FACADE.newVal.focus();
+                calendarWasFocused = false;
+            }
+        }
+
     },
 
     /**

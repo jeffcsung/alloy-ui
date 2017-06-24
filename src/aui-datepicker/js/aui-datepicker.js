@@ -18,7 +18,6 @@ var clamp = function(value, min, max) {
  *     properties.
  * @constructor
  */
-
 function DatePickerBase() {}
 
 /**
@@ -85,6 +84,7 @@ DatePickerBase.ATTRS = {
     },
 
     accessibility: ''//NEEDED FOR ACCESSIBILITY
+
 };
 
 A.mix(DatePickerBase.prototype, {
@@ -115,7 +115,6 @@ A.mix(DatePickerBase.prototype, {
         instance.getCalendar()._clearSelection(silent);
 
         instance.set('accessibility', '');//NEEDED FOR ACCESSIBILITY
-
     },
 
     /**
@@ -164,7 +163,6 @@ A.mix(DatePickerBase.prototype, {
             calendar.after(
                 'dateClick', instance._afterCalendarDateClick,
                 instance);
-
 
             // Restore the original CalendarBase template.
             A.CalendarBase.CONTENT_TEMPLATE = originalCalendarTemplate;
@@ -218,18 +216,9 @@ A.mix(DatePickerBase.prototype, {
     useInputNode: function(node) {
         var instance = this,
             popover = instance.getPopover();
-            calendar = instance.getCalendar(),
-            selectionMode = calendar.get('selectionMode');
-
         popover.set('trigger', node);
         instance.set('activeInput', node);
 
-        //=================================DEBUG===================================/
-/*
-        for (var keys in instance) {
-        };
-*/
-        //=========================================================================/
         if (!popover.get('visible')) {
             instance.alignTo(node);
         }
@@ -237,11 +226,15 @@ A.mix(DatePickerBase.prototype, {
         instance.clearSelection(true);
         instance.selectDatesFromInputValue(instance.getParsedDatesFromInputValue());
 
-        // if current node is an input field, auto show and focus calendar
+        /*// if current node is an input field, auto show and focus calendar
         if ((instance.get('activeInput')._node.localName === 'input') && (selectionMode !== 'multiple')) {
             popover.set('visible', true);
             popover.focus();
-        }
+        }*/
+      
+        // Refocus on previous node by updating newVal property to match current node.
+        instance.set('_ATTR_E_FACADE.newVal._node', node);
+        instance._ATTR_E_FACADE.newVal._node.focus();
     },
 
     /**
@@ -255,9 +248,11 @@ A.mix(DatePickerBase.prototype, {
             calendar = instance.getCalendar(),
             selectionMode = calendar.get('selectionMode');
 
-
         if (instance.get('autoHide') && (selectionMode !== 'multiple')) {
             instance.hide();
+
+            // Refocus on previous node
+            instance._ATTR_E_FACADE.newVal._node.focus();
         }
     },
 
@@ -307,6 +302,8 @@ A.mix(DatePickerBase.prototype, {
 
         // Closes calendar when enter key is pressed on date
         instance.hide();
+
+        instance._ATTR_E_FACADE.newVal._node.focus();
     },
 
     /**
