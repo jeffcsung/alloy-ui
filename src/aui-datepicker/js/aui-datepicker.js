@@ -4,10 +4,11 @@
  * @module aui-datepicker
  */
 
-var Lang = A.Lang,
-    clamp = function(value, min, max) {
+var Lang = A.Lang;
+var clamp = function(value, min, max) {
         return Math.min(Math.max(value, min), max);
     }
+var ARIA_LIVE_LEVEL = 'assertive';
 
 /**
  * A base class for `DatePickerBase`.
@@ -18,12 +19,9 @@ var Lang = A.Lang,
  * @constructor
  */
 
-function DatePickerBase() {
-
-}
+function DatePickerBase() {}
 
 /**
- * Lists `CalendarBase` pane templates.
  *
  * @property PANES
  * @type {Array}
@@ -83,7 +81,9 @@ DatePickerBase.ATTRS = {
         validator: Lang.isNumber,
         value: 1,
         writeOnce: true
-    }
+    },
+
+    accessibility: ''
 };
 
 A.mix(DatePickerBase.prototype, {
@@ -112,6 +112,7 @@ A.mix(DatePickerBase.prototype, {
         var instance = this;
 
         instance.getCalendar()._clearSelection(silent);
+        instance.set('accessibility', '');
     },
 
     /**
@@ -161,6 +162,7 @@ A.mix(DatePickerBase.prototype, {
                 'dateClick', instance._afterCalendarDateClick,
                 instance);
 
+
             // Restore the original CalendarBase template.
             A.CalendarBase.CONTENT_TEMPLATE = originalCalendarTemplate;
         }
@@ -197,6 +199,10 @@ A.mix(DatePickerBase.prototype, {
                 calendar._addDateToSelection(date, true);
             }
         );
+
+        var dateList = dates ? dates.toString() : '';
+
+        instance.set('accessibility', dateList);
 
         calendar._fireSelectionChange();
     },
@@ -236,6 +242,7 @@ A.mix(DatePickerBase.prototype, {
             calendar = instance.getCalendar(),
             selectionMode = calendar.get('selectionMode');
 
+
         if (instance.get('autoHide') && (selectionMode !== 'multiple')) {
             instance.hide();
 
@@ -261,7 +268,16 @@ A.mix(DatePickerBase.prototype, {
 
         newDates = A.Array.dedupe(newDates);
 
+        //Create the string here.
+        var dateList = newDates ? newDates.toString() : '';
+
+        instance.set('accessibility', dateList);
+
         if (newDates.length !== prevDates.length || newSelection.length < prevDates.length) {
+            var containingNode = A.one('#' + instance.getCalendar().calendarId);
+            instance.get('activeInput').setAttribute('aria-label', instance.get('accessibility'));
+            instance.get('activeInput').setAttribute('aria-live', ARIA_LIVE_LEVEL);
+
             instance.fire('selectionChange', {
                 newSelection: newSelection
             });

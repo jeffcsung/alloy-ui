@@ -20,8 +20,6 @@ var CSS_CALENDAR = getCN(CSS_PREFIX, 'calendar');
     // Variable to store previous Node informaiton
 var prevNode = {};
 
-
-
 /**
  * Fired when then enter key is pressed on an input node.
  *
@@ -37,7 +35,8 @@ var prevNode = {};
  * @constructor
  */
 
-function DatePickerDelegate() {}
+function DatePickerDelegate() {
+}
 
 DatePickerDelegate.prototype = {
     _eventHandles: null,
@@ -104,8 +103,10 @@ DatePickerDelegate.prototype = {
                 'key', A.bind('_handleEscKeyEvent', instance), 'esc', trigger),
 
             container.delegate(
-                'key', A.bind('_handleEnterKeyEvent', instance), 'enter', trigger)
+                'key', A.bind('_handleEnterKeyEvent', instance), 'enter', trigger),
 
+            container.delegate(
+                'key', A.bind('_handleEnterKeyEvent', instance), 'enter', trigger)
         ];
 
         instance.after(
@@ -122,7 +123,6 @@ DatePickerDelegate.prototype = {
             container.delegate(
                 'key', A.bind('_handleEscKeyEvent', instance), 'esc', trigger)
         ];
-
     },
 
     /**
@@ -130,7 +130,8 @@ DatePickerDelegate.prototype = {
      *
      * @method focusSelectedValue
      */
-    focusSelectedValue: function() {},
+    focusSelectedValue: function() {
+    },
 
     /**
      * Gets the selected dates.
@@ -169,7 +170,7 @@ DatePickerDelegate.prototype = {
             });
         }
 
-        return null;
+       return null;
     },
 
     /**
@@ -179,7 +180,6 @@ DatePickerDelegate.prototype = {
      */
     useInputNode: function(node) {
         var instance = this;
-
 
             return instance.useInputNode(node);
 
@@ -283,7 +283,8 @@ DatePickerDelegate.prototype = {
     * @protected
     */
     _focusOnActiveCalendarNode: function() {
-        var calendarNode = A.one('#' + this.getCalendar()._calendarId)._node.parentNode.parentNode;
+        var instance = this;
+        var calendarNode = A.one('#' + instance.getCalendar()._calendarId)._node.parentNode.parentNode;
 
         calendarNode.focus();
     },
@@ -321,7 +322,6 @@ DatePickerDelegate.prototype = {
     * @protected
     */
     _handleEscKeyEvent: function(event) {
-
         // Currently only firing while focused on node.
         var instance = this,
             calendar = instance.getCalendar();

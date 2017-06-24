@@ -20,7 +20,8 @@ var calendarWasFocused = false;
  * @constructor
  */
 
-function DatePickerPopover() {}
+function DatePickerPopover() {
+}
 
 /**
  * Static property used to define the default attribute configuration for the
@@ -104,7 +105,6 @@ A.mix(DatePickerPopover.prototype, {
 
             instance.popover = popover;
         }
-
         return popover;
     },
 
