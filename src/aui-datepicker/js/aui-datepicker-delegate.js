@@ -17,7 +17,7 @@ var getCN = A.getClassName;
 var CSS_PREFIX = 'yui3';
 var CSS_CALENDAR = getCN(CSS_PREFIX, 'calendar');
 
-// Variable to store previous Node informaiton
+    // Variable to store previous Node informaiton
 var prevNode = {};
 
 /**
@@ -103,7 +103,7 @@ DatePickerDelegate.prototype = {
                 'key', A.bind('_handleEscKeyEvent', instance), 'esc', trigger),
 
             container.delegate(
-                'key', A.bind('_handleEnterKeyEvent', instance), 'enter', trigger)
+                'key', A.bind('_handleEnterKeyEvent', instance), 'enter', trigger),
 
             container.delegate(
                 'key', A.bind('_handleEnterKeyEvent', instance), 'enter', trigger)
@@ -117,7 +117,7 @@ DatePickerDelegate.prototype = {
             'selectionChange', {
                 defaultFn: instance._defSelectionChangeFn
             });
-      
+
         // Not tested.
         _DOCUMENT._eventHandles = [
             container.delegate(
@@ -180,7 +180,9 @@ DatePickerDelegate.prototype = {
      */
     useInputNode: function(node) {
         var instance = this;
+
             return instance.useInputNode(node);
+
     },
 
     /**
@@ -265,7 +267,7 @@ DatePickerDelegate.prototype = {
     _handleKeydownEvent: function(event) {
         var instance = this;
 
-        prevNode = event._currentTarget; // Might not want it to fire every keydown.
+        prevNode = event._currentTarget;
 
         if (event.isKey('enter')) {
             instance.fire(EVENT_ENTER_KEY);
