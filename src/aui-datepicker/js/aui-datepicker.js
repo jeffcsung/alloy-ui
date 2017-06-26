@@ -5,10 +5,10 @@
  */
 
 var Lang = A.Lang;
-var ARIA_LIVE_LEVEL = 'assertive';//NEEDED FOR ACCESSIBILITY
 var clamp = function(value, min, max) {
         return Math.min(Math.max(value, min), max);
     }
+var ARIA_LIVE_LEVEL = 'assertive';
 
 /**
  * A base class for `DatePickerBase`.
@@ -18,6 +18,7 @@ var clamp = function(value, min, max) {
  *     properties.
  * @constructor
  */
+
 function DatePickerBase() {}
 
 /**
@@ -82,7 +83,7 @@ DatePickerBase.ATTRS = {
         writeOnce: true
     },
 
-    accessibility: ''//NEEDED FOR ACCESSIBILITY
+    accessibility: ''
 };
 
 A.mix(DatePickerBase.prototype, {
@@ -111,8 +112,7 @@ A.mix(DatePickerBase.prototype, {
         var instance = this;
 
         instance.getCalendar()._clearSelection(silent);
-
-        instance._attrs.accessibility = '';//NEEDED FOR ACCESSIBILITY
+        instance.set('accessibility', '');
     },
 
     /**
@@ -200,11 +200,12 @@ A.mix(DatePickerBase.prototype, {
             }
         );
 
-        var dateList = dates ? dates.toString() : '';//NEEDED FOR ACCESSIBILITY
-        instance._attrs.accessibility = dateList;//NEEDED FOR ACCESSIBILITY
+        var dateList = dates ? dates.toString() : '';
+
+        instance.set('accessibility', dateList);
 
         calendar._fireSelectionChange();
-z    },
+    },
 
     /**
      * Renders the widget in an `<input>` node.
@@ -268,17 +269,14 @@ z    },
         newDates = A.Array.dedupe(newDates);
 
         //Create the string here.
-        var dateList = newDates ? newDates.toString() : '';//NEEDED FOR ACCESSIBILITY
+        var dateList = newDates ? newDates.toString() : '';
 
-        instance._attrs.accessibility = dateList;//NEEDED FOR ACCESSIBILITY
+        instance.set('accessibility', dateList);
 
         if (newDates.length !== prevDates.length || newSelection.length < prevDates.length) {
             var containingNode = A.one('#' + instance.getCalendar().calendarId);
-            var activeInput = instance.get('activeInput');//NEEDED FOR ACCESSIBILITY
-
-// This needs to remove old aria-label and replace with new date
-            activeInput.setAttribute('aria-label', instance._attrs.accessibility);//NEEDED FOR ACCESSIBILITY
-            activeInput.setAttribute('aria-live', ARIA_LIVE_LEVEL);//NEEDED FOR ACCESSIBILITY
+            instance.get('activeInput').setAttribute('aria-label', instance.get('accessibility'));
+            instance.get('activeInput').setAttribute('aria-live', ARIA_LIVE_LEVEL);
 
             instance.fire('selectionChange', {
                 newSelection: newSelection
@@ -298,7 +296,6 @@ z    },
 
         // Closes calendar when enter key is pressed on date
         instance.hide();
-
         instance._ATTR_E_FACADE.newVal._node.focus();
     },
 
